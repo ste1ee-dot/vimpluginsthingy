@@ -3,9 +3,10 @@
 # VimPuginThingy - Installs plugins from urls provided in $VIMPLUGINSLIST
 #
 #Uses $EDITOR variable so make sure it is set
-#Required fzy or fzf and git
+#Requires fzy or fzf and git
 #
-# You can disable/enable plugins in $VIMPLUGINLIST and then running un/install
+# You can disable/enable plugins in $VIMPLUGINLIST by adding # as first char
+#    Then you run un/install to update your plugin directories
 
 VIMPLUGINSDIR="$HOME/.vim/pack/plugins/start"
 VIMPLUGINSLIST="$HOME/.vim/plugins"
