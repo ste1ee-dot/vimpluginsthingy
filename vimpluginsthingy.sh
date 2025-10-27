@@ -13,7 +13,7 @@ VIMPLUGINSLIST="$HOME/.vim/plugins"
 mkdir -p "$VIMPLUGINSDIR"
 
 while :; do
-main_choice=$(printf "Add\nInstall All\nUninstall\nQuit" | fzf)
+main_choice=$(printf "Add\nInstall All\nUninstall" | fzf)
 
 case "$main_choice" in
     "Add")
@@ -30,27 +30,29 @@ case "$main_choice" in
                 git clone "$repo" "$dest"
             fi
         done ;;
+
     "Uninstall")
-            while :; do
-                installed=$(ls "$VIMPLUGINSDIR")
-                if [ -z "$installed" ]; then
-                    echo "No plugins installed"
-                    break
+        while :; do
+            installed=$(ls "$VIMPLUGINSDIR")
+            if [ -z "$installed" ]; then
+                echo "No plugins installed"
+                break
+            fi
+
+            plugin=$(printf "%s\n" $installed | fzf )
+
+            [ -z "$plugin" ] && break
+
+            rm -rf "$VIMPLUGINSDIR/$plugin"
+            echo "Removed $plugin"
+
+            if [ -f "$VIMPLUGINSLIST" ]; then
+                if grep -q "^[^#].*$plugin" "$VIMPLUGINSLIST"; then
+                    sed "/^[^#].*$(printf '%s' "$plugin" | sed 's/[].[^$\\*\/]/\\&/g')/d" "$VIMPLUGINSLIST" > "$VIMPLUGINSLIST.tmp" \
+                        && mv "$VIMPLUGINSLIST.tmp" "$VIMPLUGINSLIST"
                 fi
-
-                plugin=$(printf "%s\n" $installed | fzf )
-
-                [ -z "$plugin" ] && break
-        
-                rm -rf "$VIMPLUGINSDIR/$plugin"
-                echo "Removed $plugin"
-
-                if [ -f "$VIMPLUGINSLIST" ]; then
-                    if grep -q "^[^#].*$plugin" "$VIMPLUGINSLIST"; then
-                        sed "/^[^#].*$plugin/d" "$VIMPLUGINSLIST" > "$VIMPLUGINSLIST.tmp" && mv "$VIMPLUGINSLIST.tmp" "$VIMPLUGINSLIST"
-                    fi
-                fi
-            done ;;
+            fi
+        done ;;
 
     *) echo "Exit" && break ;;
 esac
